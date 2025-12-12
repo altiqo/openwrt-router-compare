@@ -19,7 +19,7 @@ h1 {
 
 table {
     border-collapse: collapse;
-    min-width: 900px;
+    min-width: 1000px;
 }
 
 th, td {
@@ -51,6 +51,24 @@ tr:hover td {
     font-weight: 600;
 }
 
+.warn {
+    background: #fff3cd;
+    font-weight: 600;
+}
+
 .hover-col {
     background: #eef2ff !important;
+}
+
+.notes {
+    margin-top: 32px;
+    max-width: 900px;
+}
+
+.notes h2 {
+    margin-bottom: 8px;
+}
+
+.notes li {
+    margin-bottom: 6px;
 }
