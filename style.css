@@ -45,7 +45,7 @@ th:first-child {
 tr:hover td {
     background: #f3f6ff;
 }
-/*цвета ячеки, передаются в дате*/
+
 .good {
     background: #e7f7ec;
     font-weight: 600;
@@ -61,17 +61,36 @@ tr:hover td {
 }
 
 .notes {
+    position: relative;
     margin-top: 32px;
     max-width: 1000px;
+    padding-left: 20px;
+}
+
+.notes::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #d0d7ff;
+    border-radius: 2px;
 }
 
 .notes h2 {
     margin-bottom: 8px;
 }
 
+.notes ol {
+    margin: 0;
+    padding-left: 18px;
+}
+
 .notes li {
     margin-bottom: 6px;
 }
+
 
 .contribute {
     margin-top: 32px;
