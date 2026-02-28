@@ -2,9 +2,9 @@
 Cudy TR3000 / TR30,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,512 MB DDR3,2 внешние + 1 внутр.,Да (WAN),USB 3.0[1][2],Да,Нет,1 WAN + 1 LAN,Компактный
 Cudy WR3000S v1,ARM Cortex-A53,Wi-Fi 6,128 MB NAND,256 MB DDR3,4 внешние[6],Нет,Нет,Нет,Нет,1 WAN + 4 LAN,Настольный
 Cudy WR3000E v1,ARM Cortex-A53,Wi-Fi 6,128 MB NAND,256 MB DDR3,4 внешние[6],Нет,Нет,Нет,Нет,1 WAN + 4 LAN,Настольный
-Cudy TR1200,"580 MHz Single-Core, MIPS 24KEc",Wi-Fi 5,16 MB NOR[3][4],"128 MB DDR3",2 внешние,Нет,USB 2.0[2],Нет,Нет,1 WAN + 1 LAN (100M),Компактный
-Cudy WR1300 v3,"MT7621AT, Dual-Core 880 MHz",Wi-Fi 5,16 MB NOR[3][4],"128 MB DDR3",4 внешние,Нет,Нет,Нет,Нет,1 WAN + 4 LAN,Настольный
-Netis NX31,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR3,4 фиксированные,Нет,Нет,Нет,Нет,1 WAN + 3 LAN,Настольный
-Netis N6,"MT7621AT, Dual-Core 880 MHz",Wi-Fi 6,128 MB NAND,"256 MB DDR3",4 фиксированные,Нет,USB 3.0[2],Нет,Нет,1 WAN + 4 LAN,Настольный
-Netis NX32U,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR3,5 встроенных,Нет,USB 3.0[2],Нет,Нет,1 WAN + 3 LAN,Настольный
-Xiaomi AX3000T,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR,4 внешние,Нет,Нет,Нет,Нет,4 Gigabit порта,Настольный
+Cudy TR1200,"580 MHz Single-Core, MIPS 24KEc",Wi-Fi 5,16 MB NOR[3][4][5],"128 MB DDR3",2 внешние,Нет,USB 2.0[2],Нет,Нет,1 WAN + 1 LAN (100M),Компактный
+Cudy WR1300 v3,"MT7621AT, Dual-Core 880 MHz",Wi-Fi 5,16 MB NOR[3][4][5],"128 MB DDR3",4 внешние,Нет,Нет,Нет,Нет,1 WAN + 4 LAN,Настольный
+Netis NX31,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR3,4 внешние,Нет,Нет,Нет,Нет,1 WAN + 3 LAN,Настольный
+Netis N6,"MT7621AT, Dual-Core 880 MHz",Wi-Fi 6,128 MB NAND,"256 MB DDR3",4 внешние,Нет,USB 3.0[2],Нет,Нет,1 WAN + 4 LAN,Настольный
+Netis NX32U,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR3,4 внешние,Нет,USB 3.0[2],Нет,Нет,1 WAN + 3 LAN,Настольный
+Xiaomi AX3000T,"1.3 GHz Dual-Core, ARM Cortex-A53",Wi-Fi 6,128 MB NAND,256 MB DDR,4 внешние,Нет,Нет,Нет,Нет,1 WAN + 3 LAN,Настольный
