@@ -3,7 +3,7 @@
 Небольшая таблица сравнения роутеров, которые я рассматриваю для OpenWrt.
 
 Онлайн-версия:
-https://ТВОЙ_ЛОГИН.github.io/ТВОЙ_РЕПО/
+https://altiqo.github.io/openwrt-router-compare/
 
 ## Что внутри
 
