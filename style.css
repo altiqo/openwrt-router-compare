@@ -16,6 +16,10 @@
     --link-bg: #fafafa;
     --footnote: #666666;
     --note-active: rgba(120, 140, 255, 0.15);
+    --panel-bg: #f8f9fc;
+    --chip-bg: #ffffff;
+    --chip-border: #d9dfef;
+    --shadow: 0 10px 30px rgba(24, 36, 72, 0.08);
 }
 
 [data-theme="dark"] {
@@ -32,6 +36,10 @@
     --link-bg: #1a1d24;
     --footnote: #9aa0b3;
     --note-active: rgba(120, 140, 255, 0.25);
+    --panel-bg: #151922;
+    --chip-bg: #191f2a;
+    --chip-border: #30384b;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 /* =====================
@@ -60,13 +68,80 @@ body {
 }
 
 .theme-toggle {
-    font-size: 20px;
-    background: none;
+    font-size: 14px;
+    background: var(--link-bg);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 10px;
+    border-radius: 999px;
+    padding: 10px 14px;
     cursor: pointer;
     color: var(--text);
+}
+
+/* =====================
+   CONTROLS
+===================== */
+
+.table-controls {
+    margin-top: 20px;
+    display: grid;
+    gap: 14px;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.toolbar-button {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--link-bg);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.control-panels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.control-panel {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--panel-bg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.control-panel summary {
+    padding: 14px 16px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0 16px 16px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--chip-border);
+    border-radius: 999px;
+    background: var(--chip-bg);
+    cursor: pointer;
+}
+
+.chip input {
+    margin: 0;
 }
 
 /* =====================
@@ -81,6 +156,7 @@ body {
 table {
     border-collapse: collapse;
     min-width: 1200px;
+    width: 100%;
 }
 
 th,
@@ -102,9 +178,16 @@ td:first-child {
     position: sticky;
     left: 0;
     z-index: 2;
-    background: var(--header-bg);
     text-align: left;
     font-weight: 600;
+}
+
+th:first-child {
+    background: var(--header-bg);
+}
+
+tbody td:first-child {
+    background: var(--bg);
 }
 
 thead th {
@@ -125,6 +208,14 @@ th.hover-col:not(:first-child) {
 td:first-child.hover-col,
 th:first-child.hover-col {
     background: var(--header-bg) !important;
+}
+
+.is-hidden {
+    display: none;
+}
+
+.is-hidden-row {
+    display: none;
 }
 
 .good {
@@ -218,4 +309,27 @@ sup {
     text-decoration: none;
     color: var(--text);
     background: var(--link-bg);
+}
+
+@media (max-width: 720px) {
+    body {
+        margin: 16px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    th,
+    td {
+        padding: 12px 10px;
+        font-size: 14px;
+    }
+
+    .chip {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
