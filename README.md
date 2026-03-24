@@ -20,6 +20,7 @@ https://altiqo.github.io/openwrt-router-compare/
 - Cudy WR3000E v1
 - Cudy TR1200
 - Cudy WR1300 v3
+- Netis NX30
 - Netis NX31
 - Netis N6
 - Netis NX32U
