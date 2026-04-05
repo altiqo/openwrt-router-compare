@@ -102,6 +102,11 @@ body {
     cursor: pointer;
 }
 
+.toolbar-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
 .control-panels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -196,6 +201,22 @@ thead th {
     z-index: 3;
 }
 
+table.is-vertical {
+    min-width: 0;
+    width: max-content;
+}
+
+table.is-vertical th:first-child,
+table.is-vertical td:first-child {
+    min-width: 220px;
+}
+
+table.is-vertical thead th:not(:first-child),
+table.is-vertical tbody td {
+    min-width: 180px;
+    white-space: normal;
+}
+
 tr:hover td:not(:first-child) {
     background: var(--row-hover);
 }
@@ -226,6 +247,26 @@ th:first-child.hover-col {
 .warn {
     background: var(--warn);
     font-weight: 600;
+}
+
+.export-root {
+    display: inline-block;
+    padding: 16px;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.is-exporting-shot {
+    margin-top: 0;
+}
+
+.is-exporting-shot table {
+    width: auto;
+}
+
+.is-exporting-shot th,
+.is-exporting-shot td {
+    position: static !important;
 }
 
 /* =====================

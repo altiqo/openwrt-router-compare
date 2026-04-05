@@ -110,13 +110,48 @@ function renderFootnotes(text, notes) {
 function buildTable(rows, notes) {
     const table = document.getElementById("compare-table");
     const controlHost = document.getElementById("table-controls");
+    const tableWrap = document.querySelector(".table-wrap");
 
     table.innerHTML = "";
     controlHost.innerHTML = "";
 
     const headers = parseHeaders(rows[0]);
     const dataRows = rows.slice(1);
+    const state = {
+        table,
+        tableWrap,
+        controlHost,
+        headers,
+        dataRows,
+        notes,
+        hiddenColumns: new Set(headers.filter((header) => header.optional).map((header) => header.index)),
+        hiddenModels: new Set(),
+        orientation: localStorage.getItem("table-orientation") || "horizontal"
+    };
 
+    renderTable(state);
+    createControls(state);
+}
+
+function renderTable(state) {
+    const { table, orientation } = state;
+
+    table.innerHTML = "";
+    table.classList.toggle("is-vertical", orientation === "vertical");
+
+    if (orientation === "vertical") {
+        renderVerticalTable(state);
+    } else {
+        renderHorizontalTable(state);
+    }
+
+    syncTableVisibility(state);
+    enableColumnHover(table);
+    enableFootnoteClicks();
+}
+
+function renderHorizontalTable(state) {
+    const { table, headers, dataRows, notes } = state;
     const thead = document.createElement("thead");
     const headRow = document.createElement("tr");
 
@@ -171,10 +206,74 @@ function buildTable(rows, notes) {
     });
 
     table.appendChild(tbody);
+}
 
-    createControls(controlHost, table, headers, dataRows);
-    enableColumnHover(table);
-    enableFootnoteClicks();
+function renderVerticalTable(state) {
+    const { table, headers, dataRows, notes } = state;
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    const corner = document.createElement("th");
+
+    corner.textContent = "Характеристика";
+    headRow.appendChild(corner);
+
+    dataRows.forEach((row) => {
+        const modelName = row[0] || "Без названия";
+        const th = document.createElement("th");
+
+        th.innerHTML = renderFootnotes(modelName, notes);
+        th.dataset.model = modelName;
+        headRow.appendChild(th);
+    });
+
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+
+    headers.slice(1).forEach((header) => {
+        const tr = document.createElement("tr");
+        tr.dataset.attributeColumn = String(header.index);
+
+        const labelCell = document.createElement("th");
+        labelCell.scope = "row";
+        labelCell.innerHTML = renderFootnotes(header.label, notes);
+        labelCell.dataset.column = String(header.index);
+
+        if (header.optional) {
+            labelCell.classList.add("is-optional");
+        }
+
+        tr.appendChild(labelCell);
+
+        dataRows.forEach((row) => {
+            const td = document.createElement("td");
+            const cell = row[header.index] || "";
+            let text = cell;
+            let className = "";
+
+            if (cell.includes("|")) {
+                [text, className] = cell.split("|");
+            }
+
+            td.dataset.model = row[0] || "Без названия";
+            td.innerHTML = renderFootnotes(text, notes);
+
+            if (className) {
+                td.className = className;
+            }
+
+            if (header.optional) {
+                td.classList.add("is-optional");
+            }
+
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
 }
 
 function parseHeaders(rawHeaders) {
@@ -189,14 +288,18 @@ function parseHeaders(rawHeaders) {
     });
 }
 
-function createControls(host, table, headers, dataRows) {
+function createControls(state) {
+    const { controlHost: host, headers, dataRows } = state;
     const toolbar = document.createElement("div");
     toolbar.className = "toolbar";
 
     const resetButton = createButton("Показать все");
     const baseViewButton = createButton("Базовый вид");
+    const orientationButton = createButton("");
+    const exportButton = createButton("Сохранить PNG");
 
-    toolbar.append(resetButton, baseViewButton);
+    updateOrientationButtonLabel(orientationButton, state.orientation);
+    toolbar.append(resetButton, baseViewButton, orientationButton, exportButton);
     host.appendChild(toolbar);
 
     const panels = document.createElement("div");
@@ -211,9 +314,7 @@ function createControls(host, table, headers, dataRows) {
 
     panels.append(modelPanel.panel, columnPanel.panel);
     host.appendChild(panels);
-
-    const hiddenColumns = new Set(headers.filter((header) => header.optional).map((header) => header.index));
-    const hiddenModels = new Set();
+    const { hiddenColumns, hiddenModels } = state;
 
     const modelCheckboxes = modelPanel.checkboxes;
     const columnCheckboxes = new Map();
@@ -224,9 +325,6 @@ function createControls(host, table, headers, dataRows) {
         columnCheckboxes.set(header.index, checkbox);
     });
 
-    applyColumnVisibility(table, hiddenColumns);
-    applyModelVisibility(table, hiddenModels);
-
     modelCheckboxes.forEach((checkbox, modelName) => {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) {
@@ -235,7 +333,7 @@ function createControls(host, table, headers, dataRows) {
                 hiddenModels.add(modelName);
             }
 
-            applyModelVisibility(table, hiddenModels);
+            syncTableVisibility(state);
         });
     });
 
@@ -247,7 +345,7 @@ function createControls(host, table, headers, dataRows) {
                 hiddenColumns.add(columnIndex);
             }
 
-            applyColumnVisibility(table, hiddenColumns);
+            syncTableVisibility(state);
         });
     });
 
@@ -263,8 +361,7 @@ function createControls(host, table, headers, dataRows) {
             checkbox.checked = true;
         });
 
-        applyModelVisibility(table, hiddenModels);
-        applyColumnVisibility(table, hiddenColumns);
+        syncTableVisibility(state);
     });
 
     baseViewButton.addEventListener("click", () => {
@@ -286,9 +383,34 @@ function createControls(host, table, headers, dataRows) {
             }
         });
 
-        applyModelVisibility(table, hiddenModels);
-        applyColumnVisibility(table, hiddenColumns);
+        syncTableVisibility(state);
     });
+
+    orientationButton.addEventListener("click", () => {
+        state.orientation = state.orientation === "vertical" ? "horizontal" : "vertical";
+        localStorage.setItem("table-orientation", state.orientation);
+        updateOrientationButtonLabel(orientationButton, state.orientation);
+        renderTable(state);
+    });
+
+    exportButton.addEventListener("click", async () => {
+        exportButton.disabled = true;
+        exportButton.textContent = "Сохраняю...";
+
+        try {
+            await exportTableAsPng(state);
+        } catch (error) {
+            console.error(error);
+            window.alert("Не удалось сохранить PNG. Попробуйте ещё раз.");
+        } finally {
+            exportButton.disabled = false;
+            exportButton.textContent = "Сохранить PNG";
+        }
+    });
+}
+
+function updateOrientationButtonLabel(button, orientation) {
+    button.textContent = orientation === "vertical" ? "Горизонтальный вид" : "Вертикальный вид";
 }
 
 function createPanel(title, items, openByDefault) {
@@ -334,14 +456,27 @@ function createButton(text) {
     return button;
 }
 
-function applyColumnVisibility(table, hiddenColumns) {
+function syncTableVisibility(state) {
+    const { table, hiddenColumns, hiddenModels, orientation } = state;
+
+    if (orientation === "vertical") {
+        table.querySelectorAll("[data-model]").forEach((cell) => {
+            cell.classList.toggle("is-hidden", hiddenModels.has(cell.dataset.model));
+        });
+
+        table.querySelectorAll("tbody tr").forEach((row) => {
+            const columnIndex = Number(row.dataset.attributeColumn);
+            row.classList.toggle("is-hidden-row", hiddenColumns.has(columnIndex));
+        });
+
+        return;
+    }
+
     table.querySelectorAll("[data-column]").forEach((cell) => {
         const columnIndex = Number(cell.dataset.column);
         cell.classList.toggle("is-hidden", hiddenColumns.has(columnIndex));
     });
-}
 
-function applyModelVisibility(table, hiddenModels) {
     table.querySelectorAll("tbody tr").forEach((row) => {
         row.classList.toggle("is-hidden-row", hiddenModels.has(row.dataset.model));
     });
@@ -388,6 +523,80 @@ function enableColumnHover(table) {
                 hoveredCell.classList.remove("hover-col");
             });
         });
+    });
+}
+
+async function exportTableAsPng(state) {
+    const source = state.tableWrap;
+    const clone = source.cloneNode(true);
+    const theme = document.documentElement.getAttribute("data-theme") || "light";
+    const width = Math.ceil(source.scrollWidth + 32);
+    const height = Math.ceil(source.scrollHeight + 32);
+    const scale = Math.min(window.devicePixelRatio || 1, 2);
+
+    clone.classList.add("is-exporting-shot");
+    clone.style.overflow = "visible";
+    clone.style.width = `${source.scrollWidth}px`;
+
+    const markup = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+            <foreignObject width="100%" height="100%">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="export-root" data-theme="${theme}">
+                    <style>${collectCssText()}</style>
+                    ${clone.outerHTML}
+                </div>
+            </foreignObject>
+        </svg>
+    `;
+
+    const blob = new Blob([markup], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    try {
+        const image = await loadImage(url);
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        context.scale(scale, scale);
+        context.fillStyle = getComputedStyle(document.body).backgroundColor;
+        context.fillRect(0, 0, width, height);
+        context.drawImage(image, 0, 0, width, height);
+
+        const pngUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+
+        link.href = pngUrl;
+        link.download = `openwrt-table-${state.orientation}-${timestamp}.png`;
+        link.click();
+    } finally {
+        URL.revokeObjectURL(url);
+    }
+}
+
+function collectCssText() {
+    return Array.from(document.styleSheets)
+        .map((sheet) => {
+            try {
+                return Array.from(sheet.cssRules)
+                    .map((rule) => rule.cssText)
+                    .join("\n");
+            } catch (error) {
+                return "";
+            }
+        })
+        .join("\n");
+}
+
+function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = url;
     });
 }
 
